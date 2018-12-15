@@ -9,7 +9,7 @@
 //DCT implementation based on
 //https://github.com/penberg/classpath/blob/master/gnu/javax/imageio/jpeg/DCT.java
 
-//quantization matrix
+//quantisation matrix
 double default_matrix[8][8] = {
     { 16, 11, 10, 16, 24, 40, 51, 61},
     {12, 12, 14, 19, 26, 58, 60, 55},
@@ -36,7 +36,7 @@ double cT[8][8];
 
 void dct_init()
 {
-    //create quantization tables
+    //create quantisation tables
     q_matrix = create_array(8, 8);
     high_matrix = create_array(8, 8);
     med_matrix = create_array(8, 8);
@@ -101,10 +101,12 @@ GdkPixbuf *data_to_image(double **data, int height, int width)
         for (int x = 0; x < width; x++)
         {
             double c = (double)data[y][x] / 255;
+            //printf("%.02f ", c);
             cairo_set_source_rgb(cr, c, c, c);
             cairo_rectangle(cr, x, y, 1, 1);
             cairo_fill(cr);
         }
+        //printf("\n");
     }
 
 
@@ -113,7 +115,14 @@ GdkPixbuf *data_to_image(double **data, int height, int width)
     free(surf);
     free(cr);
 
-    return gdk_pixbuf_scale_simple(to_return, width*0.5, height*0.5, GDK_INTERP_NEAREST);
+    double sf = 1;
+
+    if (height > 800)
+        sf = 0.7;
+    if (height < 200)
+        sf = 4;
+
+    return gdk_pixbuf_scale_simple(to_return, width*sf, height*sf, GDK_INTERP_NEAREST);
 
 }
 
@@ -126,14 +135,16 @@ GdkPixbuf *get_dct_image(double **data, int height, int width)
     {
         for (int x = 0; x < width; x++)
         {
+            //printf("%.0f ", data[y][x]);
             temp[y][x] = dct_colour(data[y][x]);
         }
+        //printf("\n");
     }
+    //printf("\n");
 
     GdkPixbuf *to_return = data_to_image(temp, height, width);
     free_array(temp, height);
-    return gdk_pixbuf_scale_simple(to_return, 256, 256, GDK_INTERP_NEAREST);
-
+    return to_return;
 }
 
 //

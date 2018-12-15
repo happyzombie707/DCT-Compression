@@ -1,9 +1,5 @@
 #include "Util.h"
 
-
-
-
-
 YBRColour RGBToYCBCR(RGBColour c)
 {
 	int y = 16 + (66*c.r/256) + (129*c.g/256) + (25*c.b/256);
@@ -76,7 +72,7 @@ int matrix_to_zigzag(int i, int j, int n)
 }
 
 //divide values in a by values in b
-double** quantize_matrix(double** a, double** b, int size)
+double** quantise_matrix(double** a, double** b, int size)
 {
 	double** to_return = create_array(size, size);
     double qt;
@@ -97,7 +93,7 @@ double** quantize_matrix(double** a, double** b, int size)
 }
 
 //multiply values in array a by b
-double** dequantize_matrix(double** a, double** b, int size)
+double** dequantise_matrix(double** a, double** b, int size)
 {
     double qt;
 
@@ -185,7 +181,6 @@ double** combine_arrays(double*** images, int height, int width)
 		{
 			for (int i = 0; i < 8; i++)
 			{
-				//printf("%.1f ", images[k][i][j]);
 				to_return[row*8+j][col*8+i] = images[k][j][i];
 			}
 			
@@ -199,7 +194,7 @@ double** combine_arrays(double*** images, int height, int width)
 /*
     save compressed image to given filename
 */
-void save_compressed(const char *file_name, double*** image_data, double** quantize, int blocks, int b_width, int height, int width)
+void save_compressed(const char *file_name, double*** image_data, double** quantise, int blocks, int b_width, int height, int width)
 {
 	//set up things for saving
 	FILE *fp = fopen(file_name, "wb");
@@ -219,12 +214,12 @@ void save_compressed(const char *file_name, double*** image_data, double** quant
 	fwrite((const void*)& height, sizeof(short), 1, fp);
 	fwrite((const void*)& width, sizeof(short), 1, fp);
 	
-	//write quantize table to file
+	//write quantise table to file
 	for(int y = 0; y < 8; y++)
     {
         for (int x = 0; x < 8; x++)
         {
-            s = quantize[y][x];
+            s = quantise[y][x];
             fwrite((const void*)&s, sizeof(short), 1, fp);
         }
     }
@@ -299,7 +294,7 @@ double*** load_compressed(char *file_name, short* h, short* w, short* bl, short*
     //create array to load image into
     double*** img = create_3array(blocks, 8, 8);
 
-	//read quantize table to file
+	//read quantise table to file
 	for(int y = 0; y < 8; y++)
     {
         for (int x = 0; x < 8; x++)
@@ -338,7 +333,7 @@ double*** load_compressed(char *file_name, short* h, short* w, short* bl, short*
             zigzag_to_matrix(&x, &y, i, 8);
             temp[y][x] = d[i];
         }
-		temp = dequantize_matrix(temp, (double**)q, 8);
+		temp = dequantise_matrix(temp, (double**)q, 8);
 		for (int x = 0; x < 8; x++)
 			for (int y = 0; y < 8; y++)
 				img[k][y][x] = temp[y][x];

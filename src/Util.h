@@ -42,10 +42,10 @@ void free_array(double** a, int n);
 void free_3array(double*** a, int c, int h);
 
 double*** load_compressed(char *file_name, short* h, short* w, short* bl, short* b_w);
-void save_compressed(const char *file_name, double*** image_data, double** quantize, int blocks, int b_width, int height, int width);
+void save_compressed(const char *file_name, double*** image_data, double** quantise, int blocks, int b_width, int height, int width);
 
-double** dequantize_matrix(double** a, double** b, int size);
-double** quantize_matrix(double** a, double** b, int size);
+double** dequantise_matrix(double** a, double** b, int size);
+double** quantise_matrix(double** a, double** b, int size);
 
 
 #endif
